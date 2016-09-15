@@ -14,26 +14,19 @@
 
 		  var geochart = new google.visualization.GeoChart(
 			  document.getElementById('visualization'));
+
 		  geochart.draw(data, {width: 556, height: 347, region: "SE", resolution: "provinces"});
+
+		  google.visualization.events.addListener(geochart, 'select', function() {
+			var selectedItem = geochart.getSelection()[0];
+			if (selectedItem) {
+			  $('#modalForm').modal('show');
+			  $("#reginalcode").val(data.getValue(selectedItem.row, 0));
+			  $("#value").val(data.getValue(selectedItem.row, 1));
+			}
+
+		  });
 	  }
-    </script>
-
-    <script>
-      $(document).ready(function(){
-        $(document).on( 'click', '.visualizer', function() {
-          $('#modalForm').modal('show')
-
-          //var $row = $(this).closest("tr");
-
-          //$("#id_date").val($row.find("td:nth-child(1)").text());
-          //$("#id_description").val($row.find("td:nth-child(4)").text());
-          //$("#id_from_account").val($row.find("td:nth-child(2)").find(':input').val());
-          //$("#id_to_account").val($row.find("td:nth-child(3)").find(':input').val());
-          //$("#id_amount").val($row.find("td:nth-child(5)").text());
-          //$("#id_transaction_id").val($row.find("td:nth-child(5)").find(':input').val());
-
-        });
-      });
     </script>
 
     <div class="page-header" id="banner">
@@ -54,7 +47,16 @@
             <h4 class="modal-title" id="myModalLabel">Information</h4>
           </div>
           <div class="modal-body">
-            Banan
+			  <form>
+				<div class="form-group">
+				  <label for="reginalcode">Länskod:</label>
+				  <input type="reginalcode" class="form-control" id="reginalcode" placeholder="Länskod">
+				</div>
+				<div class="form-group">
+				  <label for="value">Värde:</label>
+				  <input type="value" class="form-control" id="value" placeholder="Värde">
+				</div>
+			  </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Stäng</button>
