@@ -3,7 +3,8 @@
         compojure.core
         compojure.route)
   (:require [compojure.handler :as handler]
-            [net.cgrand.enlive-html :as enlive])
+            [net.cgrand.enlive-html :as enlive]
+			[boskatt16.api :refer [rest-api]])
   (:gen-class))
 
 (def things ["one" "two" "three" "four"])
@@ -27,4 +28,10 @@
   (not-found "Not Found"))
 
 (defn -main []
-  (run-jetty (handler/site app) {:port 8080}))
+  (run-jetty
+;;	(-> (routes rest-api app)
+;;      (handler/site))
+;;      (wrap-base-url))
+;;	(handler/site app)
+	(handler/site (routes rest-api app))
+	{:port 8080}))

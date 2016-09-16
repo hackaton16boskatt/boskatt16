@@ -1,38 +1,50 @@
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>    
 	<script type="text/javascript">
-      google.charts.load('upcoming', {'packages':['geochart']});
-      google.charts.setOnLoadCallback(drawVisualization);
+	google.charts.load('upcoming', {'packages':['geochart']});
+	google.charts.setOnLoadCallback(drawGeochart);
 
-      function drawVisualization() {
-		  var data = google.visualization.arrayToDataTable([
-			['Lan', 'Varde'],
-			['SE-I', 200],
-			['SE-AB', 300],
-			['SE-Y', 20],
-			['SE-Z', 150]
-		  ]);
+	function drawGeochart() {
+		$.ajax({
+			url:"/api/skatt",
+			type: "GET",		
+			dataType: "json",
+			success: function(call){
+				
+				var geodata = new google.visualization.DataTable();
+				geodata.addColumn('string', 'Lan');
+				geodata.addColumn('number', 'Skatt');
+				var ThisArray = [];	
+			  
+				console.log(call);
+			  
+				$.each(call.body, function(index,data) {
+					console.log(Object.keys(data));
+					ThisArray = [[Object.keys(data)[0], parseFloat(data[Object.keys(data)[0]])]]
+					geodata.addRows(ThisArray)			
+				});
 
-		  var geochart = new google.visualization.GeoChart(
-			  document.getElementById('visualization'));
+				var geochart = new google.visualization.GeoChart(
+				  document.getElementById('visualization'));
 
-		  geochart.draw(data, {width: 556, height: 347, region: "SE", resolution: "provinces"});
+				geochart.draw(geodata, {width: 556, height: 347, region: "SE", resolution: "provinces"});
 
-		  google.visualization.events.addListener(geochart, 'select', function() {
-			var selectedItem = geochart.getSelection()[0];
-			if (selectedItem) {
-			  $('#modalForm').modal('show');
-			  $("#reginalcode").val(data.getValue(selectedItem.row, 0));
-			  $("#value").val(data.getValue(selectedItem.row, 1));
-			}
-
-		  });
-	  }
+				google.visualization.events.addListener(geochart, 'select', function() {
+					var selectedItem = geochart.getSelection()[0];
+					if (selectedItem) {
+					  $('#modalForm').modal('show');
+					  $("#reginalcode").val(geodata.getValue(selectedItem.row, 0));
+					  $("#value").val(geodata.getValue(selectedItem.row, 1));
+					}
+				});
+			}		
+		});
+	}
     </script>
 
     <div class="page-header" id="banner">
         <div class="row">
           <div class="col-md-12">
-            <h3>Karta</h3>
+            <h3>Skattekarta</h3>
           </div>
         </div>
     </div>
